@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스마트팩토리 자동화율 계산기 | Factory Land Scout</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root {
+  --bg-grad-start: #0f172a;
+  --bg-grad-end: #1e293b;
+  --text: #e2e8f0;
+  --text-strong: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --surface: rgba(30, 41, 59, 0.7);
+  --surface-2: rgba(15, 23, 42, 0.6);
+  --border: rgba(148, 163, 184, 0.15);
+  --border-strong: rgba(148, 163, 184, 0.25);
+  --accent: #6366f1;
+  --accent-2: #a855f7;
+  --accent-light: #a5b4fc;
+}
+body.light {
+  --bg-grad-start: #f8fafc;
+  --bg-grad-end: #e2e8f0;
+  --text: #0f172a;
+  --text-strong: #020617;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --border: #cbd5e1;
+  --border-strong: #94a3b8;
+  --accent-light: #4f46e5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
+  color: var(--text);
+  min-height: 100vh;
+  padding: 16px;
+}
+.wrap { max-width: 1200px; margin: 0 auto; }
+
+.toolbar { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; z-index: 50; }
+.toolbar button {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border-strong);
+  border-radius: 8px; padding: 6px 10px; font-size: 13px;
+  font-family: inherit; cursor: pointer; backdrop-filter: blur(8px);
+}
+
+header.page-head { padding: 32px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.crumb {
+  font-size: 13px; color: var(--text-muted); margin-bottom: 8px;
+}
+.crumb a { color: var(--accent-light); text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+h1 {
+  font-size: 26px; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; letter-spacing: -0.5px;
+}
+.subtitle { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+
+.params {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px; margin: 18px 0 24px;
+}
+.param {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  backdrop-filter: blur(10px);
+}
+.param-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.param-value {
+  font-size: 17px; font-weight: 700; color: var(--text-strong); margin-top: 4px;
+}
+.param-value .pct {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-left: 6px;
+}
+.param-detail { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+
+.iframe-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 8px; backdrop-filter: blur(10px);
+  margin-bottom: 16px;
+}
+.iframe-actions {
+  display: flex; gap: 8px; padding: 8px 8px 12px; justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.iframe-actions a {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; color: var(--accent-light); text-decoration: none;
+  padding: 6px 12px; background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.3); border-radius: 8px;
+}
+.iframe-actions a:hover { background: rgba(99,102,241,0.25); }
+iframe {
+  width: 100%; height: 78vh; min-height: 600px;
+  border: 0; border-radius: 10px;
+  background: white;
+}
+
+footer {
+  margin-top: 32px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim); font-size: 11.5px; text-align: center;
+}
+
+@media (max-width: 600px) {
+  body { padding: 12px; }
+  .wrap { padding-top: 40px; }
+  h1 { font-size: 22px; }
+  iframe { height: 85vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button id="themeBtn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="crumb"><a href="./">← 공장 부지 탐색</a></div>
+  <h1>🏭 스마트팩토리 자동화율 계산기</h1>
+  <div class="subtitle">하이드로겔 스마트팩토리 · 5지표 가중치 × 현재 적용 항목 기준 점수 추산</div>
+</header>
+
+<!-- 파라미터 요약 -->
+<div class="params">
+  <div class="param">
+    <div class="param-label">🔧 작업 자동화율</div>
+    <div class="param-value">2 / 16 <span class="pct">30%</span></div>
+    <div class="param-detail">16개 공정 중 2개 적용 · 가중치 30%</div>
+  </div>
+  <div class="param">
+    <div class="param-label">👥 인력 절감률</div>
+    <div class="param-value">5 / 41 <span class="pct">25%</span></div>
+    <div class="param-detail">25개 포지션·41명 중 5명 절감 · 가중치 25%</div>
+  </div>
+  <div class="param">
+    <div class="param-label">📊 데이터 자동수집률</div>
+    <div class="param-value">5 / 50 <span class="pct">20%</span></div>
+    <div class="param-detail">50개 항목 중 5개 자동수집 · 가중치 20%</div>
+  </div>
+  <div class="param">
+    <div class="param-label">🔍 품질검사 자동화율</div>
+    <div class="param-value">2 / 20 <span class="pct">15%</span></div>
+    <div class="param-detail">20개 검사 중 2개 자동화 · 가중치 15%</div>
+  </div>
+  <div class="param">
+    <div class="param-label">📄 문서 자동생성률</div>
+    <div class="param-value">0 / 100 <span class="pct">10%</span></div>
+    <div class="param-detail">100개 양식 중 0개 자동생성 · 가중치 10%</div>
+  </div>
+</div>
+
+<!-- 계산기 임베드 -->
+<div class="iframe-card">
+  <div class="iframe-actions">
+    <a href="https://automation-rate-calculator.vercel.app/?auto_task=2,16,30&manpower=5,41,25&data=5,50,20&qc=2,20,15&doc=0,100,10" target="_blank" rel="noopener">
+      🔗 새 창으로 열기
+    </a>
+    <a href="https://automation-rate-calculator.vercel.app/" target="_blank" rel="noopener">
+      📊 빈 계산기로
+    </a>
+  </div>
+  <iframe
+    src="https://automation-rate-calculator.vercel.app/?auto_task=2,16,30&manpower=5,41,25&data=5,50,20&qc=2,20,15&doc=0,100,10"
+    title="스마트팩토리 자동화율 계산기"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
+  ></iframe>
+</div>
+
+<footer>
+  계산기: <a href="https://automation-rate-calculator.vercel.app/" target="_blank" style="color:var(--accent-light)">automation-rate-calculator.vercel.app</a>
+  · repo: ajkh624/automation-rate-calculator (private) · Vercel 배포
+</footer>
+
+</div>
+
+<script>
+function applyTheme(t) {
+  document.body.classList.toggle('light', t === 'light');
+  document.getElementById('themeBtn').textContent = t === 'light' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  const cur = document.body.classList.contains('light') ? 'light' : 'dark';
+  const next = cur === 'light' ? 'dark' : 'light';
+  localStorage.setItem('fls_theme', next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem('fls_theme') || 'dark');
+</script>
+
+</body>
+</html>
