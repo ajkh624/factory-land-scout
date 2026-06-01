@@ -136,6 +136,66 @@ h2.section {
 .compare td.label { color: var(--text-muted); font-weight: 500; }
 .compare td strong { color: var(--text-strong); }
 
+/* 차트 */
+.charts {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; margin: 16px 0 24px;
+}
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px; backdrop-filter: blur(10px);
+}
+.chart-card h3 {
+  font-size: 13px; font-weight: 600; color: var(--text-strong);
+  margin-bottom: 10px;
+}
+.chart-card .chart-sub {
+  font-size: 11px; color: var(--text-muted); margin-bottom: 8px;
+}
+.chart-wrap { position: relative; height: 260px; }
+@media (max-width: 700px) {
+  .charts { grid-template-columns: 1fr; }
+  .chart-wrap { height: 230px; }
+}
+
+/* 추천 */
+.verdict {
+  background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08));
+  border: 1px solid rgba(99,102,241,0.35);
+  border-radius: 14px; padding: 20px; margin: 24px 0;
+  backdrop-filter: blur(10px);
+}
+.verdict h2 {
+  font-size: 18px; font-weight: 700; color: var(--accent-light);
+  margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+}
+.verdict .verdict-sub {
+  font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;
+}
+.verdict .pick-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px; margin-bottom: 18px;
+}
+.pick {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+}
+.pick.gold { border-color: rgba(234,179,8,0.55); background: linear-gradient(135deg, rgba(234,179,8,0.12), var(--surface-2)); }
+.pick.silver { border-color: rgba(148,163,184,0.45); }
+.pick.bronze { border-color: rgba(180,83,9,0.45); }
+.pick-rank { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.pick-title { font-size: 15px; font-weight: 700; color: var(--text-strong); margin: 4px 0 6px; }
+.pick-score { font-size: 22px; font-weight: 800; color: var(--accent-light); margin-bottom: 6px; }
+.pick-reason { font-size: 12.5px; color: var(--text-soft); line-height: 1.6; }
+
+.verdict ul { margin: 8px 0 0 18px; }
+.verdict li { font-size: 13px; color: var(--text-soft); margin-bottom: 6px; line-height: 1.6; }
+.verdict strong { color: var(--text-strong); }
+.verdict .disclaimer {
+  margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border);
+  font-size: 11.5px; color: var(--text-dim); font-style: italic;
+}
+
 /* Cards */
 .card {
   background: var(--surface); border: 1px solid var(--border);
@@ -240,6 +300,7 @@ footer {
   .card { padding: 16px; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -298,6 +359,76 @@ footer {
     <tr><td class="label" data-i18n="r_fee">중개보수 상한</td><td data-i18n="p1_fee">3,330만원</td><td data-i18n="p2_fee">4,050만원</td><td data-i18n="p3_fee">2,700만원</td></tr>
   </tbody>
 </table>
+</div>
+
+<!-- 비교 그래프 -->
+<h2 class="section">📈 비교 그래프</h2>
+<div class="charts">
+  <div class="chart-card">
+    <h3>가격 vs 평당가</h3>
+    <div class="chart-sub">막대=매매가(억) / 라인=평당가(만원/3.3㎡)</div>
+    <div class="chart-wrap"><canvas id="chartPrice"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>면적 (대지 vs 연면적)</h3>
+    <div class="chart-sub">단위: 평</div>
+    <div class="chart-wrap"><canvas id="chartArea"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>전력 가용량 (즉시 / 최대)</h3>
+    <div class="chart-sub">매물1=290/800kW · 매물2=500/500kW · 매물3=5/50kW</div>
+    <div class="chart-wrap"><canvas id="chartPower"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>스마트팩토리 적합도 레이더</h3>
+    <div class="chart-sub">5개 축 0~10점 (자체 평가 기준)</div>
+    <div class="chart-wrap"><canvas id="chartRadar"></canvas></div>
+  </div>
+</div>
+
+<!-- 추천 -->
+<div class="verdict">
+  <h2>🎯 Hermes 추천</h2>
+  <div class="verdict-sub">하이드로겔 스마트팩토리 신축·이전 관점 · 가격/입지/전력/확장성/리스크 5개 축 가중 평가</div>
+
+  <div class="pick-grid">
+    <div class="pick gold">
+      <div class="pick-rank">🥇 1순위</div>
+      <div class="pick-title">매물 ① 청북 고렴리</div>
+      <div class="pick-score">37억</div>
+      <div class="pick-reason">평당가 311만원으로 매물3과 거의 동률이면서 <strong>800kW 인프라 + 사무동·기숙사 풀세트 + 사용연한 10년</strong>. 변압기 교체 비용만 부담하면 즉시 자가공장 풀가동 가능.</div>
+    </div>
+    <div class="pick silver">
+      <div class="pick-rank">🥈 2순위</div>
+      <div class="pick-title">매물 ② 도일동</div>
+      <div class="pick-score">45억</div>
+      <div class="pick-reason">입지 최강 (삼성전자 2.9km·쌍용차 0.5km·송탄IC 0.9km) + 호이스트 5대 + 500kW 즉시 가용. 단, 25년차 RC조 · 평당 413만 · 사무실 별도비용 3만원/평 운영비 변수.</div>
+    </div>
+    <div class="pick bronze">
+      <div class="pick-rank">🥉 3순위</div>
+      <div class="pick-title">매물 ③ 청북 고잔리</div>
+      <div class="pick-score">30억</div>
+      <div class="pick-reason">최저가지만 <strong>50kW 전력 한계</strong> + 연면적 749㎡(매물1의 40% 수준)로 생산 본거지엔 부적합. 두동 분리 + 11톤 진입 + 가설 100평 → 물류창고/임대수익형으로만 검토.</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:14px;color:var(--text-strong);margin:14px 0 6px;">추천 근거 5축</h3>
+  <ul>
+    <li><strong>① 비용 효율 (평당가):</strong> 1번 311 · 3번 307 · 2번 413. 1·3번 동률이지만 1번은 건물이 2.5배. <strong>실질 단가 1번 압승.</strong></li>
+    <li><strong>② 입지 (수요·인력·물류):</strong> 2번 ≫ 1번·3번. 단 2번 입지 프리미엄은 평당가 +100만에 이미 반영. 1번은 청북IC·고렴리로 평택항 컨테이너 물류 동선 양호.</li>
+    <li><strong>③ 전력 (스마트팩토리 핵심):</strong> 1번 800kW (변압기 교체 2~5천만) · 2번 500kW 즉시 · 3번 50kW(한전 인입공사 수천만~억 단위). <strong>3번은 하이드로겔 공정 부적합.</strong></li>
+    <li><strong>④ 확장성·운영 유연성:</strong> 1번 3구획 분할/통합 자유 + 사무동·기숙사 자체. 2번 4층 RC조로 라인 변경 제약 크고 호이스트 위주. 3번 두동 분리로 임대 분할은 좋지만 자가 확장 어려움.</li>
+    <li><strong>⑤ 리스크:</strong> 2번 25년 노후화 → 리모델링·내진보강 비용 미반영 · 화장실 0개 · 사무실 3만원/평 별도비용 ↔ 1번 2016년 신축급 · 화장실 2개 · 융자 30%↑ 가능. 3번 전력 증설 한전 시간 6~12개월 리스크.</li>
+  </ul>
+
+  <h3 style="font-size:14px;color:var(--text-strong);margin:16px 0 6px;">시나리오별 권장 액션</h3>
+  <ul>
+    <li><strong>자가 생산 본거지 (하이드로겔 공장 풀가동):</strong> <strong>1번 우선 임장</strong> + 변압기 교체 견적 (한전 직선거리·신청 가능량 확인) + 동향 채광 동선 점검</li>
+    <li><strong>입지 프리미엄 + 호이스트 활용 (중대형 설비 운영):</strong> 2번 임장 + RC조 4층 라인 동선 도면 받기 + 25년차 누수·내진보강 견적</li>
+    <li><strong>임대수익형 / 물류창고:</strong> 3번 임장 + 한 동 본인·한 동 임대 시 임대가 시세 조사 (청북읍 50평 단동 월세)</li>
+  </ul>
+
+  <div class="disclaimer">⚠️ 상기 평가는 네이버 부동산 게재 정보 + 일반 시장 통념 기반의 책상 위 1차 검토입니다. 실제 의사결정 전 <strong>현장 임장·등기부·토지이용계획·건축물대장·한전 인입가능량·환경/소방 인허가</strong>를 반드시 별도 확인하세요. 본 페이지는 투자 권유가 아닙니다.</div>
 </div>
 
 <!-- 매물 1 -->
@@ -689,6 +820,88 @@ function setLang(lng) {
 const savedLang = localStorage.getItem('fls_lang') || 'ko';
 if (savedLang !== 'ko') setLang(savedLang);
 document.getElementById('langSel').value = savedLang;
+
+// === Charts ===
+function renderCharts() {
+  if (typeof Chart === 'undefined') return;
+  const isLight = document.body.classList.contains('light');
+  const text = isLight ? '#0f172a' : '#e2e8f0';
+  const muted = isLight ? '#475569' : '#94a3b8';
+  const grid = isLight ? 'rgba(148,163,184,0.25)' : 'rgba(148,163,184,0.15)';
+  Chart.defaults.color = text;
+  Chart.defaults.borderColor = grid;
+  Chart.defaults.font.family = '"Pretendard Variable", Pretendard, sans-serif';
+
+  const labels = ['① 청북·고렴리', '② 도일동', '③ 청북·고잔리'];
+  const colors = ['rgba(99,102,241,0.7)','rgba(168,85,247,0.7)','rgba(234,179,8,0.7)'];
+  const colorsBorder = ['#6366f1','#a855f7','#eab308'];
+
+  // 1. 가격 vs 평당가
+  if (window._c1) window._c1.destroy();
+  window._c1 = new Chart(document.getElementById('chartPrice'), {
+    data: {
+      labels,
+      datasets: [
+        { type:'bar', label:'매매가 (억)', data:[37,45,30], backgroundColor: colors, borderColor: colorsBorder, borderWidth:1, yAxisID:'y' },
+        { type:'line', label:'평당가 (만원/3.3㎡)', data:[311,413,307], borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.15)', tension:0.3, yAxisID:'y1', pointRadius:5 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      scales:{ y:{ position:'left', title:{display:true,text:'억원',color:muted}, grid:{color:grid} }, y1:{ position:'right', title:{display:true,text:'만원/평',color:muted}, grid:{display:false} } },
+      plugins:{ legend:{ labels:{boxWidth:12} } }
+    }
+  });
+
+  // 2. 면적
+  if (window._c2) window._c2.destroy();
+  window._c2 = new Chart(document.getElementById('chartArea'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { label:'대지(평)', data:[1188,1090,976], backgroundColor:'rgba(99,102,241,0.7)', borderColor:'#6366f1', borderWidth:1 },
+        { label:'연면적(평)', data:[563,696,227], backgroundColor:'rgba(168,85,247,0.55)', borderColor:'#a855f7', borderWidth:1 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ grid:{color:grid} } } }
+  });
+
+  // 3. 전력
+  if (window._c3) window._c3.destroy();
+  window._c3 = new Chart(document.getElementById('chartPower'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { label:'즉시 가용 (kW)', data:[290,500,5], backgroundColor:'rgba(34,197,94,0.7)', borderColor:'#22c55e', borderWidth:1 },
+        { label:'최대 (kW)', data:[800,500,50], backgroundColor:'rgba(99,102,241,0.4)', borderColor:'#6366f1', borderWidth:1 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ grid:{color:grid}, title:{display:true,text:'kW',color:muted} } } }
+  });
+
+  // 4. 레이더 (자체 평가 5축)
+  if (window._c4) window._c4.destroy();
+  window._c4 = new Chart(document.getElementById('chartRadar'), {
+    type:'radar',
+    data:{
+      labels:['가격 효율','입지','전력','확장성','신축성·리스크'],
+      datasets:[
+        { label:'① 고렴리', data:[9,7,9,9,9], backgroundColor:'rgba(99,102,241,0.25)', borderColor:'#6366f1', borderWidth:2, pointBackgroundColor:'#6366f1' },
+        { label:'② 도일동', data:[5,10,7,5,4], backgroundColor:'rgba(168,85,247,0.2)', borderColor:'#a855f7', borderWidth:2, pointBackgroundColor:'#a855f7' },
+        { label:'③ 고잔리', data:[9,5,2,4,7], backgroundColor:'rgba(234,179,8,0.2)', borderColor:'#eab308', borderWidth:2, pointBackgroundColor:'#eab308' }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      scales:{ r:{ angleLines:{color:grid}, grid:{color:grid}, pointLabels:{color:text,font:{size:11}}, ticks:{display:false,beginAtZero:true,max:10} } }
+    }
+  });
+}
+renderCharts();
+// 테마 토글 시 차트 색 재계산
+const _origToggle = toggleTheme;
+toggleTheme = function(){ _origToggle(); renderCharts(); };
 </script>
 
 </body>
