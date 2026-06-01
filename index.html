@@ -3,148 +3,285 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>공장 부지 탐색 | 평택 권역</title>
+<title>공장 부지 탐색 | Factory Land Scout</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <style>
 :root {
-  --bg: #0d1117;
-  --card: #161b22;
-  --border: #30363d;
-  --text: #e6edf3;
-  --muted: #8b949e;
-  --accent: #58a6ff;
-  --good: #3fb950;
-  --warn: #d29922;
-  --bad: #f85149;
+  --bg-grad-start: #0f172a;
+  --bg-grad-end: #1e293b;
+  --text: #e2e8f0;
+  --text-strong: #f1f5f9;
+  --text-soft: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --surface: rgba(30, 41, 59, 0.7);
+  --surface-2: rgba(15, 23, 42, 0.6);
+  --surface-3: rgba(15, 23, 42, 0.5);
+  --border: rgba(148, 163, 184, 0.15);
+  --border-strong: rgba(148, 163, 184, 0.25);
+  --accent: #6366f1;
+  --accent-2: #a855f7;
+  --accent-light: #a5b4fc;
+  --success: #22c55e;
+  --warning: #eab308;
+  --info: #3b82f6;
+  --danger: #ef4444;
+}
+body.light {
+  --bg-grad-start: #f8fafc;
+  --bg-grad-end: #e2e8f0;
+  --text: #0f172a;
+  --text-strong: #020617;
+  --text-soft: #1e293b;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+  --border: #cbd5e1;
+  --border-strong: #94a3b8;
+  --accent: #6366f1;
+  --accent-2: #a855f7;
+  --accent-light: #4f46e5;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
-  background: var(--bg); color: var(--text); line-height: 1.6;
-  padding: 16px; max-width: 1100px; margin: 0 auto;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+  min-height: 100vh;
 }
-header { padding: 20px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-h1 { font-size: 22px; font-weight: 700; }
-.subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
-.updated { color: var(--muted); font-size: 12px; margin-top: 8px; }
+.wrap { max-width: 1100px; margin: 0 auto; }
 
-.summary {
-  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-  padding: 14px 16px; margin-bottom: 20px; font-size: 13px;
+/* Top toolbar (right) */
+.toolbar {
+  position: fixed; top: 14px; right: 14px;
+  display: flex; gap: 8px; z-index: 50;
 }
-.summary strong { color: var(--accent); }
+.toolbar button, .toolbar select {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px; padding: 6px 10px; font-size: 13px;
+  font-family: inherit; cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.toolbar button:hover { border-color: var(--accent); }
 
-.card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-  padding: 16px; margin-bottom: 16px;
-}
-.card-head {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  flex-wrap: wrap; gap: 8px; margin-bottom: 12px; padding-bottom: 12px;
+/* Header */
+header.page-head {
+  padding: 32px 0 20px;
   border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
 }
-.card-title { font-size: 17px; font-weight: 600; }
-.card-id { color: var(--muted); font-size: 12px; font-family: ui-monospace, monospace; }
-.price { font-size: 20px; font-weight: 700; color: var(--accent); margin-top: 4px; }
-.price-unit { font-size: 12px; color: var(--muted); margin-left: 6px; font-weight: 400; }
-
-.row { display: flex; padding: 6px 0; font-size: 14px; gap: 8px; border-bottom: 1px solid rgba(48,54,61,0.4); }
-.row:last-child { border: 0; }
-.label { color: var(--muted); min-width: 110px; flex-shrink: 0; }
-.value { color: var(--text); word-break: break-word; }
-
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.tag {
-  background: rgba(88,166,255,0.12); color: var(--accent);
-  border: 1px solid rgba(88,166,255,0.3);
-  padding: 3px 9px; border-radius: 12px; font-size: 11.5px;
+h1 {
+  font-size: 26px; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
 }
+.subtitle { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+.updated { color: var(--text-dim); font-size: 12px; margin-top: 4px; }
 
+/* Summary callout */
+.summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  font-size: 13.5px;
+  color: var(--text-soft);
+  backdrop-filter: blur(10px);
+}
+.summary strong { color: var(--accent-light); }
+
+/* Section title */
 .section-title {
-  font-size: 12px; color: var(--muted); text-transform: uppercase;
-  letter-spacing: 0.5px; margin: 14px 0 6px; font-weight: 600;
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  margin: 16px 0 8px; font-weight: 700;
+}
+h2.section {
+  font-size: 17px; font-weight: 700;
+  color: var(--text-strong);
+  margin: 28px 0 14px;
+  display: flex; align-items: center; gap: 8px;
 }
 
-.link-row {
-  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+/* Compare table */
+.compare-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px; backdrop-filter: blur(10px);
+  overflow-x: auto;
 }
-.link-row a {
-  display: inline-block; color: var(--accent); text-decoration: none;
-  font-size: 12.5px; word-break: break-all;
-  padding: 8px 12px; background: rgba(88,166,255,0.08);
-  border: 1px solid rgba(88,166,255,0.2); border-radius: 6px;
-  margin-top: 4px;
-}
-.link-row a:hover { background: rgba(88,166,255,0.18); }
-
-.broker { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
-.broker strong { color: var(--text); }
-
-/* 비교표 */
-.compare-wrap { overflow-x: auto; margin: 16px 0; }
 .compare {
-  width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px;
-  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  width: 100%; border-collapse: collapse;
+  font-size: 13.5px; min-width: 640px;
 }
 .compare th, .compare td {
-  padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  padding: 11px 14px; text-align: left;
+  border-bottom: 1px solid var(--border);
 }
-.compare th { background: rgba(88,166,255,0.06); color: var(--accent); font-weight: 600; }
+.compare th {
+  color: var(--accent-light); font-weight: 600;
+  background: var(--surface-3);
+  position: sticky; top: 0;
+}
 .compare tr:last-child td { border-bottom: 0; }
-.compare td.label { color: var(--muted); font-weight: 500; }
+.compare td.label { color: var(--text-muted); font-weight: 500; }
+.compare td strong { color: var(--text-strong); }
+
+/* Cards */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 18px;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--border-strong); }
+
+.card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 14px;
+  padding-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+.card-title {
+  font-size: 18px; font-weight: 700; color: var(--text-strong);
+}
+.card-id {
+  color: var(--text-dim); font-size: 12px;
+  font-family: ui-monospace, "SF Mono", monospace; margin-top: 4px;
+}
+.price {
+  font-size: 24px; font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 6px;
+}
+.price-unit {
+  font-size: 12px; color: var(--text-muted);
+  margin-left: 8px; font-weight: 500;
+  -webkit-text-fill-color: var(--text-muted);
+}
+
+.row {
+  display: flex; padding: 7px 0; font-size: 14px; gap: 10px;
+  border-bottom: 1px dashed var(--border);
+}
+.row:last-child { border: 0; }
+.label { color: var(--text-muted); min-width: 120px; flex-shrink: 0; }
+.value { color: var(--text); word-break: break-word; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tag {
+  background: rgba(99,102,241,0.15);
+  color: var(--accent-light);
+  border: 1px solid rgba(99,102,241,0.3);
+  padding: 4px 10px; border-radius: 14px; font-size: 11.5px;
+  font-weight: 500;
+}
+body.light .tag {
+  background: rgba(99,102,241,0.1);
+  color: var(--accent-light);
+}
+
+.broker {
+  font-size: 13px; color: var(--text-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; margin-top: 10px;
+}
+.broker strong { color: var(--text-strong); }
+
+.link-row { margin-top: 14px; }
+.link-row a {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--accent-light); text-decoration: none;
+  font-size: 13px; word-break: break-all;
+  padding: 9px 14px;
+  background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 8px; font-weight: 500;
+  transition: all 0.2s;
+}
+.link-row a:hover {
+  background: rgba(99,102,241,0.25);
+  transform: translateY(-1px);
+}
 
 footer {
-  margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border);
-  color: var(--muted); font-size: 11.5px; text-align: center;
+  margin-top: 40px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim); font-size: 11.5px; text-align: center;
 }
 
 @media (max-width: 600px) {
   body { padding: 12px; }
-  .label { min-width: 90px; }
+  .wrap { padding-top: 40px; }
+  h1 { font-size: 22px; }
+  .label { min-width: 100px; }
   .row { font-size: 13px; }
+  .price { font-size: 21px; }
+  .card { padding: 16px; }
 }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🏭 공장 부지 탐색</h1>
-  <div class="subtitle">평택 권역 매매 공장 매물 비교 · 출처: 네이버페이 부동산</div>
-  <div class="updated">최종 업데이트: 2026-06-01 · 매물 3건</div>
+<div class="toolbar">
+  <button id="themeBtn" onclick="toggleTheme()">🌙</button>
+  <select id="langSel" onchange="setLang(this.value)">
+    <option value="ko">한국어</option>
+    <option value="en">English</option>
+  </select>
+</div>
+
+<div class="wrap">
+<header class="page-head">
+  <h1 data-i18n="title">🏭 공장 부지 탐색</h1>
+  <div class="subtitle" data-i18n="subtitle">평택 권역 매매 공장 매물 비교 · 출처: 네이버페이 부동산</div>
+  <div class="updated" data-i18n="updated">최종 업데이트: 2026-06-01 · 매물 3건</div>
 </header>
 
 <div class="summary">
-  📍 <strong>탐색 권역:</strong> 경기 평택시 (청북읍 · 도일동) · 공장 매매 · 30~50억 ·
-  대지 ~1,000평 이상<br>
-  💡 <strong>비교 포인트:</strong> 평당가 · 용도지역 · 건폐율 · 사용연한 · 진입성 · 전력
+  📍 <strong data-i18n="area_label">탐색 권역:</strong>
+  <span data-i18n="area_val">경기 평택시 (청북읍 · 도일동) · 공장 매매 · 30~50억 · 대지 ~1,000평 이상</span><br>
+  💡 <strong data-i18n="point_label">비교 포인트:</strong>
+  <span data-i18n="point_val">평당가 · 용도지역 · 건폐율 · 사용연한 · 진입성 · 전력</span>
 </div>
 
-<!-- 비교 요약 표 -->
-<h2 class="section-title" style="font-size:15px; color:var(--text); margin-top:24px;">📊 비교 요약</h2>
+<h2 class="section" data-i18n="compare_h">📊 비교 요약</h2>
 <div class="compare-wrap">
 <table class="compare">
   <thead>
     <tr>
-      <th>항목</th>
-      <th>매물 1 (청북·고렴리)</th>
-      <th>매물 2 (도일동)</th>
-      <th>매물 3 (청북·고잔리)</th>
+      <th data-i18n="th_item">항목</th>
+      <th data-i18n="th_l1">매물 1 (청북·고렴리)</th>
+      <th data-i18n="th_l2">매물 2 (도일동)</th>
+      <th data-i18n="th_l3">매물 3 (청북·고잔리)</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td class="label">매매가</td><td>매매가 미확정 (필터 30~50억)</td><td><strong>45억</strong></td><td><strong>30억</strong></td></tr>
-    <tr><td class="label">평당가</td><td>—</td><td>413만원/3.3㎡</td><td>307만원/3.3㎡</td></tr>
-    <tr><td class="label">대지</td><td>3,928㎡ (1,188평)</td><td>3,602㎡ (1,090평)</td><td>3,226㎡ (976평)</td></tr>
-    <tr><td class="label">연면적</td><td>1,862㎡</td><td>2,300㎡</td><td>749.59㎡</td></tr>
-    <tr><td class="label">층수</td><td>지상 2층</td><td>지상 4층</td><td>지상 1층</td></tr>
-    <tr><td class="label">건폐율/용적률</td><td>35.8% / 47.4%</td><td>63.9% / 63.9%</td><td>— / 23.2%</td></tr>
-    <tr><td class="label">사용승인</td><td>2016.07.27 (10년)</td><td>2001.09.10 (25년)</td><td>2011.07.13 (15년)</td></tr>
-    <tr><td class="label">주구조</td><td>철골조</td><td>철근콘크리트</td><td>—</td></tr>
-    <tr><td class="label">사용전력</td><td>100~1000kW (고전력)</td><td>100~1000kW</td><td>—</td></tr>
-    <tr><td class="label">용도지역</td><td>계획관리지역</td><td>—</td><td>—</td></tr>
-    <tr><td class="label">주차</td><td>8대</td><td>—</td><td>10대</td></tr>
-    <tr><td class="label">방향</td><td>동향</td><td>남향</td><td>북서향</td></tr>
-    <tr><td class="label">취득세</td><td>약 1.70억</td><td>약 2.07억</td><td>약 1.38억</td></tr>
-    <tr><td class="label">중개보수 상한</td><td>3,330만원</td><td>4,050만원</td><td>2,700만원</td></tr>
+    <tr><td class="label" data-i18n="r_price">매매가</td><td data-i18n="p1_price">매매가 미확정 (필터 30~50억)</td><td data-i18n="p2_price"><strong>45억</strong></td><td data-i18n="p3_price"><strong>30억</strong></td></tr>
+    <tr><td class="label" data-i18n="r_unit">평당가</td><td>—</td><td data-i18n="p2_unit">413만원/3.3㎡</td><td data-i18n="p3_unit">307만원/3.3㎡</td></tr>
+    <tr><td class="label" data-i18n="r_land">대지</td><td data-i18n="p1_land">3,928㎡ (1,188평)</td><td data-i18n="p2_land">3,602㎡ (1,090평)</td><td data-i18n="p3_land">3,226㎡ (976평)</td></tr>
+    <tr><td class="label" data-i18n="r_gfa">연면적</td><td>1,862㎡</td><td>2,300㎡</td><td>749.59㎡</td></tr>
+    <tr><td class="label" data-i18n="r_floor">층수</td><td data-i18n="p1_floor">지상 2층</td><td data-i18n="p2_floor">지상 4층</td><td data-i18n="p3_floor">지상 1층</td></tr>
+    <tr><td class="label" data-i18n="r_cov">건폐율/용적률</td><td>35.8% / 47.4%</td><td>63.9% / 63.9%</td><td>— / 23.2%</td></tr>
+    <tr><td class="label" data-i18n="r_app">사용승인</td><td data-i18n="p1_app">2016.07.27 (10년)</td><td data-i18n="p2_app">2001.09.10 (25년)</td><td data-i18n="p3_app">2011.07.13 (15년)</td></tr>
+    <tr><td class="label" data-i18n="r_str">주구조</td><td data-i18n="p1_str">철골조</td><td data-i18n="p2_str">철근콘크리트</td><td>—</td></tr>
+    <tr><td class="label" data-i18n="r_pwr">사용전력</td><td data-i18n="p1_pwr">100~1000kW (고전력)</td><td>100~1000kW</td><td>—</td></tr>
+    <tr><td class="label" data-i18n="r_zone">용도지역</td><td data-i18n="p1_zone">계획관리지역</td><td>—</td><td>—</td></tr>
+    <tr><td class="label" data-i18n="r_park">주차</td><td data-i18n="p1_park">8대</td><td>—</td><td data-i18n="p3_park">10대</td></tr>
+    <tr><td class="label" data-i18n="r_dir">방향</td><td data-i18n="p1_dir">동향</td><td data-i18n="p2_dir">남향</td><td data-i18n="p3_dir">북서향</td></tr>
+    <tr><td class="label" data-i18n="r_tax">취득세</td><td data-i18n="p1_tax">약 1.70억</td><td data-i18n="p2_tax">약 2.07억</td><td data-i18n="p3_tax">약 1.38억</td></tr>
+    <tr><td class="label" data-i18n="r_fee">중개보수 상한</td><td data-i18n="p1_fee">3,330만원</td><td data-i18n="p2_fee">4,050만원</td><td data-i18n="p3_fee">2,700만원</td></tr>
   </tbody>
 </table>
 </div>
@@ -153,47 +290,46 @@ footer {
 <div class="card">
   <div class="card-head">
     <div>
-      <div class="card-title">매물 ① 평택 청북읍 고렴리</div>
+      <div class="card-title" data-i18n="c1_title">매물 ① 평택 청북읍 고렴리</div>
       <div class="card-id">매물번호 2627074655</div>
-      <div class="price">매매가 미확정<span class="price-unit">URL 필터 30~50억</span></div>
+      <div class="price" data-i18n="c1_price">매매가 미확정<span class="price-unit" data-i18n="c1_punit">URL 필터 30~50억</span></div>
     </div>
   </div>
 
   <div class="tags">
-    <span class="tag">고전력</span>
-    <span class="tag">사무동</span>
-    <span class="tag">기숙사</span>
-    <span class="tag">대지 1,187평</span>
-    <span class="tag">건폐 35.8%</span>
-    <span class="tag">처마 6m</span>
-    <span class="tag">계획관리지역</span>
+    <span class="tag" data-i18n="c1_t1">고전력</span>
+    <span class="tag" data-i18n="c1_t2">사무동</span>
+    <span class="tag" data-i18n="c1_t3">기숙사</span>
+    <span class="tag" data-i18n="c1_t4">대지 1,187평</span>
+    <span class="tag" data-i18n="c1_t5">건폐 35.8%</span>
+    <span class="tag" data-i18n="c1_t6">처마 6m</span>
+    <span class="tag" data-i18n="c1_t7">계획관리지역</span>
   </div>
 
-  <div class="section-title">기본 정보</div>
-  <div class="row"><div class="label">소재지</div><div class="value">경기 평택시 청북읍 고렴리</div></div>
-  <div class="row"><div class="label">대지/연면적</div><div class="value">3,928㎡ / 1,862㎡</div></div>
-  <div class="row"><div class="label">건축/전용</div><div class="value">1,407㎡ / -</div></div>
-  <div class="row"><div class="label">층수</div><div class="value">지상 2층</div></div>
-  <div class="row"><div class="label">용적률/건폐율</div><div class="value">47.4% / 35.8%</div></div>
-  <div class="row"><div class="label">용도지역</div><div class="value">계획관리지역</div></div>
-  <div class="row"><div class="label">건축물 용도</div><div class="value">공장 (현재용도: 공장·창고)</div></div>
-  <div class="row"><div class="label">주구조</div><div class="value">철골조</div></div>
-  <div class="row"><div class="label">사용승인</div><div class="value">2016.07.27</div></div>
-  <div class="row"><div class="label">사용전력</div><div class="value">100~1000kW</div></div>
-  <div class="row"><div class="label">방향</div><div class="value">동향</div></div>
-  <div class="row"><div class="label">주차</div><div class="value">8대</div></div>
-  <div class="row"><div class="label">화장실</div><div class="value">2개</div></div>
-  <div class="row"><div class="label">입주</div><div class="value">즉시입주 · 협의가능</div></div>
-  <div class="row"><div class="label">융자</div><div class="value">시세 대비 30% 이상</div></div>
+  <div class="section-title" data-i18n="s_basic">기본 정보</div>
+  <div class="row"><div class="label" data-i18n="l_addr">소재지</div><div class="value" data-i18n="c1_addr">경기 평택시 청북읍 고렴리</div></div>
+  <div class="row"><div class="label" data-i18n="l_land_gfa">대지/연면적</div><div class="value">3,928㎡ / 1,862㎡</div></div>
+  <div class="row"><div class="label" data-i18n="l_built">건축/전용</div><div class="value">1,407㎡ / -</div></div>
+  <div class="row"><div class="label" data-i18n="l_floor">층수</div><div class="value" data-i18n="c1_floor">지상 2층</div></div>
+  <div class="row"><div class="label" data-i18n="l_cov">용적률/건폐율</div><div class="value">47.4% / 35.8%</div></div>
+  <div class="row"><div class="label" data-i18n="l_zone">용도지역</div><div class="value" data-i18n="c1_zone">계획관리지역</div></div>
+  <div class="row"><div class="label" data-i18n="l_use">건축물 용도</div><div class="value" data-i18n="c1_use">공장 (현재용도: 공장·창고)</div></div>
+  <div class="row"><div class="label" data-i18n="l_str">주구조</div><div class="value" data-i18n="c1_str">철골조</div></div>
+  <div class="row"><div class="label" data-i18n="l_app">사용승인</div><div class="value">2016.07.27</div></div>
+  <div class="row"><div class="label" data-i18n="l_pwr">사용전력</div><div class="value">100~1000kW</div></div>
+  <div class="row"><div class="label" data-i18n="l_dir">방향</div><div class="value" data-i18n="c1_dir">동향</div></div>
+  <div class="row"><div class="label" data-i18n="l_park">주차</div><div class="value" data-i18n="c1_park">8대</div></div>
+  <div class="row"><div class="label" data-i18n="l_toilet">화장실</div><div class="value" data-i18n="c1_toilet">2개</div></div>
+  <div class="row"><div class="label" data-i18n="l_move">입주</div><div class="value" data-i18n="c1_move">즉시입주 · 협의가능</div></div>
+  <div class="row"><div class="label" data-i18n="l_loan">융자</div><div class="value" data-i18n="c1_loan">시세 대비 30% 이상</div></div>
 
-  <div class="section-title">세금·중개보수</div>
-  <div class="row"><div class="label">취득세</div><div class="value">약 1억 7,020만원 (취득 14,800 + 지방교육 1,480 + 농특 740)</div></div>
-  <div class="row"><div class="label">중개보수</div><div class="value">최대 3,330만원 (VAT별도) · 상한요율 0.9%</div></div>
+  <div class="section-title" data-i18n="s_tax">세금·중개보수</div>
+  <div class="row"><div class="label" data-i18n="l_tax">취득세</div><div class="value" data-i18n="c1_tax">약 1억 7,020만원 (취득 14,800 + 지방교육 1,480 + 농특 740)</div></div>
+  <div class="row"><div class="label" data-i18n="l_fee">중개보수</div><div class="value" data-i18n="c1_fee">최대 3,330만원 (VAT별도) · 상한요율 0.9%</div></div>
 
   <div class="link-row">
-    <div class="section-title">원문 링크</div>
     <a href="https://new.land.naver.com/offices?ms=2AqhKS,3zgDck,15&a=GJCG&b=A1&e=RETAIL&f=300000&g=500000&h=1351&articleNo=2627074655" target="_blank" rel="noopener">
-      🔗 네이버페이 부동산에서 보기
+      🔗 <span data-i18n="link_label">네이버페이 부동산에서 보기</span>
     </a>
   </div>
 </div>
@@ -202,51 +338,50 @@ footer {
 <div class="card">
   <div class="card-head">
     <div>
-      <div class="card-title">매물 ② 평택 도일동 (쌍용차·브레인시티 인접)</div>
+      <div class="card-title" data-i18n="c2_title">매물 ② 평택 도일동 (쌍용차·브레인시티 인접)</div>
       <div class="card-id">매물번호 2624481589</div>
-      <div class="price">45억<span class="price-unit">413만원/3.3㎡</span></div>
+      <div class="price">45억<span class="price-unit" data-i18n="c2_punit">413만원/3.3㎡</span></div>
     </div>
   </div>
 
   <div class="tags">
-    <span class="tag">쌍용차 인접</span>
-    <span class="tag">브레인시티 산단 옆</span>
-    <span class="tag">4층 공장</span>
-    <span class="tag">대지 1,090평</span>
-    <span class="tag">건폐 63.9%</span>
-    <span class="tag">RC조</span>
+    <span class="tag" data-i18n="c2_t1">쌍용차 인접</span>
+    <span class="tag" data-i18n="c2_t2">브레인시티 산단 옆</span>
+    <span class="tag" data-i18n="c2_t3">4층 공장</span>
+    <span class="tag" data-i18n="c2_t4">대지 1,090평</span>
+    <span class="tag" data-i18n="c2_t5">건폐 63.9%</span>
+    <span class="tag" data-i18n="c2_t6">RC조</span>
   </div>
 
-  <div class="section-title">기본 정보</div>
-  <div class="row"><div class="label">소재지</div><div class="value">경기 평택시 도일동</div></div>
-  <div class="row"><div class="label">대지/연면적</div><div class="value">3,602㎡ / 2,300㎡</div></div>
-  <div class="row"><div class="label">건축/전용</div><div class="value">2,300㎡ / -</div></div>
-  <div class="row"><div class="label">층수</div><div class="value">지상 4층</div></div>
-  <div class="row"><div class="label">용적률/건폐율</div><div class="value">63.9% / 63.9%</div></div>
-  <div class="row"><div class="label">건축물 용도</div><div class="value">공장</div></div>
-  <div class="row"><div class="label">주구조</div><div class="value">철근콘크리트</div></div>
-  <div class="row"><div class="label">사용승인</div><div class="value">2001.09.10</div></div>
-  <div class="row"><div class="label">사용전력</div><div class="value">100~1000kW</div></div>
-  <div class="row"><div class="label">난방</div><div class="value">개별난방</div></div>
-  <div class="row"><div class="label">방향</div><div class="value">남향</div></div>
-  <div class="row"><div class="label">화장실</div><div class="value">0개 (현장 확인 필요)</div></div>
-  <div class="row"><div class="label">입주</div><div class="value">즉시입주</div></div>
+  <div class="section-title" data-i18n="s_basic">기본 정보</div>
+  <div class="row"><div class="label" data-i18n="l_addr">소재지</div><div class="value" data-i18n="c2_addr">경기 평택시 도일동</div></div>
+  <div class="row"><div class="label" data-i18n="l_land_gfa">대지/연면적</div><div class="value">3,602㎡ / 2,300㎡</div></div>
+  <div class="row"><div class="label" data-i18n="l_built">건축/전용</div><div class="value">2,300㎡ / -</div></div>
+  <div class="row"><div class="label" data-i18n="l_floor">층수</div><div class="value" data-i18n="c2_floor">지상 4층</div></div>
+  <div class="row"><div class="label" data-i18n="l_cov">용적률/건폐율</div><div class="value">63.9% / 63.9%</div></div>
+  <div class="row"><div class="label" data-i18n="l_use">건축물 용도</div><div class="value" data-i18n="c2_use">공장</div></div>
+  <div class="row"><div class="label" data-i18n="l_str">주구조</div><div class="value" data-i18n="c2_str">철근콘크리트</div></div>
+  <div class="row"><div class="label" data-i18n="l_app">사용승인</div><div class="value">2001.09.10</div></div>
+  <div class="row"><div class="label" data-i18n="l_pwr">사용전력</div><div class="value">100~1000kW</div></div>
+  <div class="row"><div class="label" data-i18n="l_heat">난방</div><div class="value" data-i18n="c2_heat">개별난방</div></div>
+  <div class="row"><div class="label" data-i18n="l_dir">방향</div><div class="value" data-i18n="c2_dir">남향</div></div>
+  <div class="row"><div class="label" data-i18n="l_toilet">화장실</div><div class="value" data-i18n="c2_toilet">0개 (현장 확인 필요)</div></div>
+  <div class="row"><div class="label" data-i18n="l_move">입주</div><div class="value" data-i18n="c2_move">즉시입주</div></div>
 
-  <div class="section-title">세금·중개보수</div>
-  <div class="row"><div class="label">취득세</div><div class="value">약 2억 700만원 (취득 18,000 + 지방교육 1,800 + 농특 900)</div></div>
-  <div class="row"><div class="label">중개보수</div><div class="value">최대 4,050만원 (VAT별도) · 상한요율 0.9%</div></div>
+  <div class="section-title" data-i18n="s_tax">세금·중개보수</div>
+  <div class="row"><div class="label" data-i18n="l_tax">취득세</div><div class="value" data-i18n="c2_tax">약 2억 700만원 (취득 18,000 + 지방교육 1,800 + 농특 900)</div></div>
+  <div class="row"><div class="label" data-i18n="l_fee">중개보수</div><div class="value" data-i18n="c2_fee">최대 4,050만원 (VAT별도) · 상한요율 0.9%</div></div>
 
-  <div class="section-title">중개사</div>
-  <div class="broker">
+  <div class="section-title" data-i18n="s_broker">중개사</div>
+  <div class="broker" data-i18n="c2_broker">
     <strong>지제역알파고유공인중개사사무소</strong> · 대표 유양기<br>
     경기 평택시 지제동 567 302호 · ☎ 031-651-1890 / 010-6345-8494<br>
     최근 3개월 집주인확인 19건 · 한국공인중개사협회 제공 · 최초게재 2026.05.06
   </div>
 
   <div class="link-row">
-    <div class="section-title">원문 링크</div>
     <a href="https://new.land.naver.com/offices?ms=2ApRhY,3zlnuh,15&a=GJCG&b=A1&e=RETAIL&f=300000&g=500000&h=1351&articleNo=2624481589" target="_blank" rel="noopener">
-      🔗 네이버페이 부동산에서 보기
+      🔗 <span data-i18n="link_label">네이버페이 부동산에서 보기</span>
     </a>
   </div>
 </div>
@@ -255,54 +390,210 @@ footer {
 <div class="card">
   <div class="card-head">
     <div>
-      <div class="card-title">매물 ③ 평택 청북읍 고잔리</div>
-      <div class="card-id">매물번호 2628879206 (소유자확인 26.05.28)</div>
-      <div class="price">30억<span class="price-unit">307만원/3.3㎡</span></div>
+      <div class="card-title" data-i18n="c3_title">매물 ③ 평택 청북읍 고잔리</div>
+      <div class="card-id" data-i18n="c3_id">매물번호 2628879206 (소유자확인 26.05.28)</div>
+      <div class="price">30억<span class="price-unit" data-i18n="c3_punit">307만원/3.3㎡</span></div>
     </div>
   </div>
 
   <div class="tags">
-    <span class="tag">11톤차량 진입가능</span>
-    <span class="tag">두동구조</span>
-    <span class="tag">마당 넓음</span>
-    <span class="tag">가설 100p</span>
-    <span class="tag">청북IC 근접</span>
-    <span class="tag">대지 976평</span>
+    <span class="tag" data-i18n="c3_t1">11톤차량 진입가능</span>
+    <span class="tag" data-i18n="c3_t2">두동구조</span>
+    <span class="tag" data-i18n="c3_t3">마당 넓음</span>
+    <span class="tag" data-i18n="c3_t4">가설 100p</span>
+    <span class="tag" data-i18n="c3_t5">청북IC 근접</span>
+    <span class="tag" data-i18n="c3_t6">대지 976평</span>
   </div>
 
-  <div class="section-title">기본 정보</div>
-  <div class="row"><div class="label">소재지</div><div class="value">경기 평택시 청북읍 고잔리</div></div>
-  <div class="row"><div class="label">대지/연면적</div><div class="value">3,226㎡ / 749.59㎡</div></div>
-  <div class="row"><div class="label">층수</div><div class="value">지상 1층 (전체 1층)</div></div>
-  <div class="row"><div class="label">용적률</div><div class="value">23.2% (건폐율 표기 없음)</div></div>
-  <div class="row"><div class="label">건축물 용도</div><div class="value">공장</div></div>
-  <div class="row"><div class="label">사용승인</div><div class="value">2011.07.13</div></div>
-  <div class="row"><div class="label">방향</div><div class="value">북서향</div></div>
-  <div class="row"><div class="label">주차</div><div class="value">10대</div></div>
-  <div class="row"><div class="label">입주</div><div class="value">즉시입주</div></div>
+  <div class="section-title" data-i18n="s_basic">기본 정보</div>
+  <div class="row"><div class="label" data-i18n="l_addr">소재지</div><div class="value" data-i18n="c3_addr">경기 평택시 청북읍 고잔리</div></div>
+  <div class="row"><div class="label" data-i18n="l_land_gfa">대지/연면적</div><div class="value">3,226㎡ / 749.59㎡</div></div>
+  <div class="row"><div class="label" data-i18n="l_floor">층수</div><div class="value" data-i18n="c3_floor">지상 1층 (전체 1층)</div></div>
+  <div class="row"><div class="label" data-i18n="l_far">용적률</div><div class="value" data-i18n="c3_far">23.2% (건폐율 표기 없음)</div></div>
+  <div class="row"><div class="label" data-i18n="l_use">건축물 용도</div><div class="value" data-i18n="c3_use">공장</div></div>
+  <div class="row"><div class="label" data-i18n="l_app">사용승인</div><div class="value">2011.07.13</div></div>
+  <div class="row"><div class="label" data-i18n="l_dir">방향</div><div class="value" data-i18n="c3_dir">북서향</div></div>
+  <div class="row"><div class="label" data-i18n="l_park">주차</div><div class="value" data-i18n="c3_park">10대</div></div>
+  <div class="row"><div class="label" data-i18n="l_move">입주</div><div class="value" data-i18n="c3_move">즉시입주</div></div>
 
-  <div class="section-title">세금·중개보수</div>
-  <div class="row"><div class="label">취득세</div><div class="value">약 1억 3,800만원 (취득 12,000 + 지방교육 1,200 + 농특 600)</div></div>
-  <div class="row"><div class="label">중개보수</div><div class="value">최대 2,700만원 (VAT별도) · 상한요율 0.9%</div></div>
+  <div class="section-title" data-i18n="s_tax">세금·중개보수</div>
+  <div class="row"><div class="label" data-i18n="l_tax">취득세</div><div class="value" data-i18n="c3_tax">약 1억 3,800만원 (취득 12,000 + 지방교육 1,200 + 농특 600)</div></div>
+  <div class="row"><div class="label" data-i18n="l_fee">중개보수</div><div class="value" data-i18n="c3_fee">최대 2,700만원 (VAT별도) · 상한요율 0.9%</div></div>
 
-  <div class="section-title">중개사</div>
-  <div class="broker">
+  <div class="section-title" data-i18n="s_broker">중개사</div>
+  <div class="broker" data-i18n="c3_broker">
     <strong>만세부동산공인중개사사무소</strong> · 대표 윤정석<br>
     경기 화성시 효행구 정남면 신리 149-22 6호 · ☎ 031-353-1227 / 010-4661-8889<br>
     최근 3개월 집주인확인 65건 (매매 50건) · 부동산써브 제공 · 최초게재 2026.05.28
   </div>
 
   <div class="link-row">
-    <div class="section-title">원문 링크</div>
     <a href="https://new.land.naver.com/offices?ms=2Ar9mQ,3zhbXM,15&a=GJCG&b=A1&e=RETAIL&f=300000&g=400000&h=2975&i=3306" target="_blank" rel="noopener">
-      🔗 네이버페이 부동산에서 보기
+      🔗 <span data-i18n="link_label">네이버페이 부동산에서 보기</span>
     </a>
   </div>
 </div>
 
-<footer>
+<footer data-i18n="footer">
   데이터 출처: 네이버페이 부동산 · 본 페이지는 개인 검토용 정리본 · 최종 가격·조건은 중개사 통해 재확인 필요
 </footer>
+</div>
+
+<script>
+// === Theme ===
+function applyTheme(t) {
+  document.body.classList.toggle('light', t === 'light');
+  document.getElementById('themeBtn').textContent = t === 'light' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  const cur = document.body.classList.contains('light') ? 'light' : 'dark';
+  const next = cur === 'light' ? 'dark' : 'light';
+  localStorage.setItem('fls_theme', next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem('fls_theme') || 'dark');
+
+// === i18n (USD 환산 1,350원/$ 고정) ===
+const FX = 1350;
+const I18N = {
+  ko: {}, // 기본은 HTML 그대로
+  en: {
+    title: "🏭 Factory Land Scout",
+    subtitle: "Pyeongtaek factory sale listings · Source: Naver Pay Real Estate",
+    updated: "Last update: 2026-06-01 · 3 listings",
+    area_label: "Search area:",
+    area_val: "Pyeongtaek (Cheongbuk-eup · Doil-dong) · Factory sale · KRW 3.0–5.0B (USD 2.22–3.70M @1,350) · Land ~1,000 pyeong+",
+    point_label: "Compare on:",
+    point_val: "Unit price · Zoning · Coverage ratio · Building age · Access · Power",
+    compare_h: "📊 Comparison",
+    th_item: "Item",
+    th_l1: "Listing 1 (Goryeom-ri)",
+    th_l2: "Listing 2 (Doil-dong)",
+    th_l3: "Listing 3 (Gojan-ri)",
+    r_price: "Price",
+    r_unit: "Unit price",
+    r_land: "Land area",
+    r_gfa: "Gross floor area",
+    r_floor: "Floors",
+    r_cov: "Coverage / FAR",
+    r_app: "Use approval",
+    r_str: "Structure",
+    r_pwr: "Power",
+    r_zone: "Zoning",
+    r_park: "Parking",
+    r_dir: "Orientation",
+    r_tax: "Acquisition tax",
+    r_fee: "Brokerage (max)",
+    p1_price: "TBD (filter: KRW 3.0–5.0B / USD 2.22–3.70M)",
+    p2_price: "<strong>KRW 4.5B (USD 3.33M)</strong>",
+    p3_price: "<strong>KRW 3.0B (USD 2.22M)</strong>",
+    p2_unit: "KRW 4.13M / 3.3㎡ (≈ USD 3,059)",
+    p3_unit: "KRW 3.07M / 3.3㎡ (≈ USD 2,274)",
+    p1_land: "3,928㎡ (1,188 pyeong)",
+    p2_land: "3,602㎡ (1,090 pyeong)",
+    p3_land: "3,226㎡ (976 pyeong)",
+    p1_floor: "2F above ground",
+    p2_floor: "4F above ground",
+    p3_floor: "1F above ground",
+    p1_app: "2016.07.27 (10y)",
+    p2_app: "2001.09.10 (25y)",
+    p3_app: "2011.07.13 (15y)",
+    p1_str: "Steel frame",
+    p2_str: "Reinforced concrete",
+    p1_pwr: "100~1000kW (high power)",
+    p1_zone: "Planned Management Zone",
+    p1_park: "8 spaces",
+    p3_park: "10 spaces",
+    p1_dir: "East",
+    p2_dir: "South",
+    p3_dir: "North-West",
+    p1_tax: "≈ KRW 170M (USD 126K)",
+    p2_tax: "≈ KRW 207M (USD 153K)",
+    p3_tax: "≈ KRW 138M (USD 102K)",
+    p1_fee: "KRW 33.3M (USD 24.7K)",
+    p2_fee: "KRW 40.5M (USD 30.0K)",
+    p3_fee: "KRW 27.0M (USD 20.0K)",
+    // Card 1
+    c1_title: "Listing ① Goryeom-ri, Cheongbuk-eup, Pyeongtaek",
+    c1_price: "Price TBD",
+    c1_punit: "URL filter KRW 3.0–5.0B (USD 2.22–3.70M)",
+    c1_t1: "High power", c1_t2: "Office bldg", c1_t3: "Dormitory",
+    c1_t4: "Land 1,187 py", c1_t5: "Coverage 35.8%", c1_t6: "Eave 6m",
+    c1_t7: "Planned Mgmt Zone",
+    c1_addr: "Goryeom-ri, Cheongbuk-eup, Pyeongtaek, Gyeonggi-do",
+    c1_floor: "2F above ground",
+    c1_zone: "Planned Management Zone",
+    c1_use: "Factory (current: factory / warehouse)",
+    c1_str: "Steel frame",
+    c1_dir: "East",
+    c1_park: "8 spaces",
+    c1_toilet: "2",
+    c1_move: "Immediate · negotiable",
+    c1_loan: "30%+ of market value (loan available)",
+    c1_tax: "≈ KRW 170.2M / USD 126K (acq 148M + edu 14.8M + farm 7.4M)",
+    c1_fee: "Max KRW 33.3M (USD 24.7K, +VAT) · cap rate 0.9%",
+    // Card 2
+    c2_title: "Listing ② Doil-dong (next to SsangYong & Brain City)",
+    c2_punit: "KRW 4.13M / 3.3㎡ (≈ USD 3,059)",
+    c2_t1: "Next to SsangYong", c2_t2: "Brain City industrial park", c2_t3: "4F factory",
+    c2_t4: "Land 1,090 py", c2_t5: "Coverage 63.9%", c2_t6: "RC structure",
+    c2_addr: "Doil-dong, Pyeongtaek, Gyeonggi-do",
+    c2_floor: "4F above ground",
+    c2_use: "Factory",
+    c2_str: "Reinforced concrete",
+    c2_heat: "Individual heating",
+    c2_dir: "South",
+    c2_toilet: "0 (verify on-site)",
+    c2_move: "Immediate",
+    c2_tax: "≈ KRW 207M / USD 153K (acq 180M + edu 18M + farm 9M)",
+    c2_fee: "Max KRW 40.5M (USD 30.0K, +VAT) · cap rate 0.9%",
+    c2_broker: "<strong>Jije-yeok Alpago Realty</strong> · CEO Yu Yang-gi<br>567 Jije-dong #302, Pyeongtaek · ☎ 031-651-1890 / 010-6345-8494<br>Owner-verified 19 cases in last 3 months · KAR · listed 2026.05.06",
+    // Card 3
+    c3_title: "Listing ③ Gojan-ri, Cheongbuk-eup, Pyeongtaek",
+    c3_id: "Listing No. 2628879206 (owner-verified 26.05.28)",
+    c3_punit: "KRW 3.07M / 3.3㎡ (≈ USD 2,274)",
+    c3_t1: "11-ton truck access", c3_t2: "Two-building layout", c3_t3: "Large yard",
+    c3_t4: "Temp install 100p", c3_t5: "Near Cheongbuk IC", c3_t6: "Land 976 py",
+    c3_addr: "Gojan-ri, Cheongbuk-eup, Pyeongtaek, Gyeonggi-do",
+    c3_floor: "1F above ground (single floor)",
+    c3_far: "FAR 23.2% (coverage N/A)",
+    c3_use: "Factory",
+    c3_dir: "North-West",
+    c3_park: "10 spaces",
+    c3_move: "Immediate",
+    c3_tax: "≈ KRW 138M / USD 102K (acq 120M + edu 12M + farm 6M)",
+    c3_fee: "Max KRW 27.0M (USD 20.0K, +VAT) · cap rate 0.9%",
+    c3_broker: "<strong>Manse Realty</strong> · CEO Yun Jeong-seok<br>149-22 Sinri #6, Jeongnam-myeon, Hyohaeng-gu, Hwaseong · ☎ 031-353-1227 / 010-4661-8889<br>Owner-verified 65 cases in last 3 months (50 sale) · Real Estate Serve · listed 2026.05.28",
+    // Section labels
+    s_basic: "Basic info",
+    s_tax: "Tax & brokerage",
+    s_broker: "Broker",
+    l_addr: "Address", l_land_gfa: "Land / GFA", l_built: "Built / Net",
+    l_floor: "Floors", l_cov: "Coverage / FAR", l_zone: "Zoning",
+    l_use: "Building use", l_str: "Structure", l_app: "Use approval",
+    l_pwr: "Power", l_heat: "Heating", l_dir: "Orientation",
+    l_park: "Parking", l_toilet: "Toilets", l_move: "Move-in",
+    l_loan: "Loan", l_tax: "Acquisition tax", l_fee: "Brokerage",
+    l_far: "FAR",
+    link_label: "View on Naver Real Estate",
+    footer: "Source: Naver Pay Real Estate · Personal review only · Verify final price/terms via broker · USD figures @ KRW 1,350/USD"
+  }
+};
+function setLang(lng) {
+  localStorage.setItem('fls_lang', lng);
+  document.documentElement.lang = lng;
+  document.getElementById('langSel').value = lng;
+  if (lng === 'ko') { location.reload(); return; }
+  const dict = I18N[lng];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (dict[k] !== undefined) el.innerHTML = dict[k];
+  });
+}
+const savedLang = localStorage.getItem('fls_lang') || 'ko';
+if (savedLang !== 'ko') setLang(savedLang);
+document.getElementById('langSel').value = savedLang;
+</script>
 
 </body>
 </html>
