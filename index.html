@@ -198,6 +198,15 @@ body.light .tag {
   border-radius: 8px; padding: 10px 12px; margin-top: 10px;
 }
 .broker strong { color: var(--text-strong); }
+.desc {
+  font-size: 13px; color: var(--text-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px; padding: 12px 14px; margin-top: 10px;
+  line-height: 1.7; white-space: pre-line;
+}
+.desc strong { color: var(--accent-light); }
 
 .link-row { margin-top: 14px; }
 .link-row a {
@@ -273,8 +282,8 @@ footer {
     </tr>
   </thead>
   <tbody>
-    <tr><td class="label" data-i18n="r_price">매매가</td><td data-i18n="p1_price">매매가 미확정 (필터 30~50억)</td><td data-i18n="p2_price"><strong>45억</strong></td><td data-i18n="p3_price"><strong>30억</strong></td></tr>
-    <tr><td class="label" data-i18n="r_unit">평당가</td><td>—</td><td data-i18n="p2_unit">413만원/3.3㎡</td><td data-i18n="p3_unit">307만원/3.3㎡</td></tr>
+    <tr><td class="label" data-i18n="r_price">매매가</td><td data-i18n="p1_price"><strong>37억</strong></td><td data-i18n="p2_price"><strong>45억</strong></td><td data-i18n="p3_price"><strong>30억</strong></td></tr>
+    <tr><td class="label" data-i18n="r_unit">평당가</td><td data-i18n="p1_unit">311만원/3.3㎡</td><td data-i18n="p2_unit">413만원/3.3㎡</td><td data-i18n="p3_unit">307만원/3.3㎡</td></tr>
     <tr><td class="label" data-i18n="r_land">대지</td><td data-i18n="p1_land">3,928㎡ (1,188평)</td><td data-i18n="p2_land">3,602㎡ (1,090평)</td><td data-i18n="p3_land">3,226㎡ (976평)</td></tr>
     <tr><td class="label" data-i18n="r_gfa">연면적</td><td>1,862㎡</td><td>2,300㎡</td><td>749.59㎡</td></tr>
     <tr><td class="label" data-i18n="r_floor">층수</td><td data-i18n="p1_floor">지상 2층</td><td data-i18n="p2_floor">지상 4층</td><td data-i18n="p3_floor">지상 1층</td></tr>
@@ -297,7 +306,7 @@ footer {
     <div>
       <div class="card-title" data-i18n="c1_title">매물 ① 평택 청북읍 고렴리</div>
       <div class="card-id">매물번호 2627074655</div>
-      <div class="price" data-i18n="c1_price">매매가 미확정<span class="price-unit" data-i18n="c1_punit">URL 필터 30~50억</span></div>
+      <div class="price">37억<span class="price-unit" data-i18n="c1_punit">311만원/3.3㎡</span></div>
     </div>
   </div>
 
@@ -331,6 +340,31 @@ footer {
   <div class="section-title" data-i18n="s_tax">세금·중개보수</div>
   <div class="row"><div class="label" data-i18n="l_tax">취득세</div><div class="value" data-i18n="c1_tax">약 1억 7,020만원 (취득 14,800 + 지방교육 1,480 + 농특 740)</div></div>
   <div class="row"><div class="label" data-i18n="l_fee">중개보수</div><div class="value" data-i18n="c1_fee">최대 3,330만원 (VAT별도) · 상한요율 0.9%</div></div>
+
+  <div class="section-title" data-i18n="s_desc">매물설명</div>
+  <div class="desc" data-i18n="c1_desc"><strong>공장동 구획 / 전력 / 시설 요약</strong>
+
+• 공장동은 원래 1구획 통건물 → 현재 3구획으로 분할 사용. <strong>필요 시 통합 가능</strong>
+• 사무동: 기숙사 2개 호실 (큰 편)
+• 공장동 2층: 약 54평 사무실
+• 전기: <strong>800kW 시설 완비</strong>, 현재 변압기 290kW로 다운 사용 중 → 이상 사용 시 변압기 교체 필요
+• 처마 높이 6m · 도로폭 6m · 청북IC 인접
+• 동력 800kW · 지하수 / 정화조 · 호이스트 없음 · 동향
+• 입주 협의
+
+<strong>면적 (중개사 표기 기준)</strong>
+대지 1,078평 (3,564㎡) + 도로 110평 별도 = 총 1,188평
+건물 약 563평 (1,861㎡): 1층 공장 350평 · 2층 사무실 54평 · 1층 사무동 76평 · 2층 사무동 74평 · 옥탑 계단실 9평
+
+<strong>주차</strong> 8대 · <strong>방있음</strong> · <strong>욕실없음</strong>
+중개사 매물번호 198</div>
+
+  <div class="section-title" data-i18n="s_broker">중개사</div>
+  <div class="broker" data-i18n="c1_broker">
+    <strong>제1공장 공인중개사사무소</strong> · 대표 임우성<br>
+    ☎ 031-655-5566 / F 031-366-6735 / H 010-8884-2268<br>
+    ✉ 77t77@daum.net · 중개사 매물번호 198
+  </div>
 
   <div class="link-row">
     <a href="https://new.land.naver.com/offices?ms=2AqhKS,3zgDck,15&a=GJCG&b=A1&e=RETAIL&f=300000&g=500000&h=1351&articleNo=2627074655" target="_blank" rel="noopener">
@@ -489,9 +523,10 @@ const I18N = {
     r_dir: "Orientation",
     r_tax: "Acquisition tax",
     r_fee: "Brokerage (max)",
-    p1_price: "TBD (filter: KRW 3.0–5.0B / USD 2.22–3.70M)",
+    p1_price: "<strong>KRW 3.7B (USD 2.74M)</strong>",
     p2_price: "<strong>KRW 4.5B (USD 3.33M)</strong>",
     p3_price: "<strong>KRW 3.0B (USD 2.22M)</strong>",
+    p1_unit: "KRW 3.11M / 3.3㎡ (≈ USD 2,304)",
     p2_unit: "KRW 4.13M / 3.3㎡ (≈ USD 3,059)",
     p3_unit: "KRW 3.07M / 3.3㎡ (≈ USD 2,274)",
     p1_land: "3,928㎡ (1,188 pyeong)",
@@ -520,8 +555,12 @@ const I18N = {
     p3_fee: "KRW 27.0M (USD 20.0K)",
     // Card 1
     c1_title: "Listing ① Goryeom-ri, Cheongbuk-eup, Pyeongtaek",
-    c1_price: "Price TBD",
-    c1_punit: "URL filter KRW 3.0–5.0B (USD 2.22–3.70M)",
+    c1_price: "KRW 3.7B",
+    c1_punit: "KRW 3.11M / 3.3㎡ (≈ USD 2,304)",
+    c1_pwr_v: "800kW installed (current transformer 290kW)",
+    s_desc: "Listing description",
+    c1_desc: "<strong>Plant partitioning / Power / Facilities</strong>\n\n• Factory building was originally one unit, currently used as 3 partitions. <strong>Can be reunified anytime.</strong>\n• Office building includes 2 dormitory rooms (large size)\n• Factory 2F: ~54 pyeong office\n• Electricity: <strong>800kW infrastructure</strong> installed, currently using 290kW transformer. Transformer replacement needed for higher load.\n• Eave height 6m · Road width 6m · Near Cheongbuk IC\n• Power 800kW · Groundwater / Septic · No hoist · East-facing\n• Move-in: negotiable\n\n<strong>Area (broker figures)</strong>\nLand 1,078 pyeong (3,564㎡) + road 110 pyeong separate = total 1,188 pyeong\nBuilding ~563 pyeong (1,861㎡): 1F factory 350py · 2F office 54py · 1F office bldg 76py · 2F office bldg 74py · rooftop stairwell 9py\n\n<strong>Parking</strong> 8 spaces · <strong>Has rooms</strong> · <strong>No bathroom</strong>\nBroker listing No. 198",
+    c1_broker: "<strong>Je1Gongjang Realty</strong> · CEO Im Woo-seong<br>☎ 031-655-5566 / F 031-366-6735 / H 010-8884-2268<br>✉ 77t77@daum.net · Broker listing No. 198",
     c1_t1: "High power", c1_t2: "Office bldg", c1_t3: "Dormitory",
     c1_t4: "Land 1,187 py", c1_t5: "Coverage 35.8%", c1_t6: "Eave 6m",
     c1_t7: "Planned Mgmt Zone",
